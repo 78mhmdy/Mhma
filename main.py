@@ -1,42 +1,53 @@
+import os
+import requests
+import asyncio
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import Message
+from aiogram.client.session.aiohttp import AiohttpSession
+ # تعيين مفاتيح API
+TELEGRAM_BOT_TOKEN = ""
+OPENROUTER_API_KEY = ""
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
+import asyncio
+import requests
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message
 
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, filters, CallbackContext
+# تعيين مفاتيح API
+TELEGRAM_BOT_TOKEN = "7504087824:AAHCgJb3s99FtOeIIga8oDYdV6Zn9y82gQw"
+OPENROUTER_API_KEY = "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"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-TOKEN = '7511938455:AAE99I9njQWTe7NIe9vqEIgiWB9f_Z8KnR0'
+# تهيئة البوت والموزع
+bot = Bot(token=TELEGRAM_BOT_TOKEN)  # تم تصحيح التعريف هنا
+dp = Dispatcher()
 
-def start(update: Update, context: CallbackContext):
-    update.message.reply_text('مرحبًا! استخدم /set_source لتحديد القناة المصدر و /set_target لتحديد القناة الهدف.')
+# دالة إرسال الطلب إلى OpenRouter
+async def get_ai_response(prompt):
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": "openai/gpt-3.5-turbo",  # يمكن تغييره إلى gpt-4 إذا كان متاحًا
+        "messages": [{"role": "user", "content": prompt}]
+    }
 
-def set_source(update: Update, context: CallbackContext):
-    global source_chat_id
-    source_chat_id = update.message.text
-    update.message.reply_text(f'تم تعيين القناة المصدر: {source_chat_id}')
+    response = requests.post(OPENROUTER_API_URL, json=data, headers=headers)
+    return response.json().get("choices", [{}])[0].get("message", {}).get("content", "لم أفهم سؤالك!")
 
-def set_target(update: Update, context: CallbackContext):
-    global target_chat_id
-    target_chat_id = update.message.text
-    update.message.reply_text(f'تم تعيين القناة الهدف: {target_chat_id}')
+# التعامل مع الرسائل المستلمة
+@dp.message()
+async def handle_message(message: Message):
+    user_input = message.text
+    ai_response = await get_ai_response(user_input)
+    await message.answer(ai_response)
 
-def forward_message(update: Update, context: CallbackContext):
-    global source_chat_id, target_chat_id
-    if source_chat_id and target_chat_id:
-        if str(update.message.chat_id) == source_chat_id:
-            update.message.forward(chat_id=target_chat_id)
-    else:
-        update.message.reply_text('يرجى تعيين القناة المصدر والهدف أولاً.')
+# تشغيل البوت
+async def main():
+    print("البوت قيد التشغيل...")
+    await dp.start_polling(bot)  # الآن `bot` معرف بشكل صحيح
 
-def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
-
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("set_source", set_source))
-    dp.add_handler(CommandHandler("set_target", set_target))
-    dp.add_handler(MessageHandler(filters.text & ~filters.command, forward_message))
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    asyncio.run(main())
