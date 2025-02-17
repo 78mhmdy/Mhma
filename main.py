@@ -7,8 +7,8 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from fastapi import FastAPI, Request
 
 # تعيين مفاتيح API
-TELEGRAM_BOT_TOKEN = os.getenv("7504087824:AAHCgJb3s99FtOeIIga8oDYdV6Zn9y82gQw")
-OPENROUTER_API_KEY = os.getenv("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")
+TELEGRAM_BOT_TOKEN = "7504087824:AAHCgJb3s99FtOeIIga8oDYdV6Zn9y82gQw"
+OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 WEBHOOK_URL = "https://your-vercel-app.vercel.app/webhook"  # استبدل هذا بالرابط الحقيقي بعد نشر البوت
