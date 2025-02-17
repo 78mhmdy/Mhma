@@ -1,5 +1,4 @@
-python-telegram-bot
-flask
-telegram
 aiogram
+fastapi
+uvicorn
 requests
