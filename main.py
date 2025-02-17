@@ -11,7 +11,7 @@ TELEGRAM_BOT_TOKEN = "7504087824:AAHCgJb3s99FtOeIIga8oDYdV6Zn9y82gQw"
 OPENROUTER_API_KEY = "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"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-WEBHOOK_URL = " https://vercel.com/78mhmdys-projects/mhma/sFg1vVTCw7PYrpekd4j1T711ztVQ"  # استبدل هذا بالرابط الحقيقي بعد نشر البوت
+WEBHOOK_URL = "https://mhma-gamma.vercel.app/webhook"  # استبدل هذا بالرابط الحقيقي بعد نشر البوت
 
 # تهيئة البوت والموزع
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
