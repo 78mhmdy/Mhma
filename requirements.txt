@@ -1,3 +1,5 @@
 python-telegram-bot
 flask
 telegram
+aiogram
+requests
